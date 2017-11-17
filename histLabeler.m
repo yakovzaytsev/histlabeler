@@ -22,7 +22,7 @@ function varargout = histLabeler(varargin)
 
 % Edit the above text to modify the response to help histLabeler
 
-% Last Modified by GUIDE v2.5 17-Nov-2017 17:46:28
+% Last Modified by GUIDE v2.5 17-Nov-2017 22:26:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,8 +59,17 @@ handles.p = 0;
 %handles.minslider.Callback = @(slider,evdata) updateSlider(handles.axes1, slider, handles.minedit, handles.minedit, handles.maxedit, handles);
 
 RGB = imread('/Users/ysz/MATLAB/meter/0_b_meter.jpg');
-axes(handles.axes2);
 I = rgb2gray(RGB);
+
+green = cat(3, zeros(size(I)), ones(size(I)), zeros(size(I)));
+axes(handles.axesmask);
+g = imshow(green);
+tmp = zeros(size(I));
+tmp(:) = 0.5;
+set(g, 'AlphaData', tmp);
+
+handles.I = I;
+axes(handles.axes2);
 imshow(I);
 axes(handles.axes1);
 imhist(I);
@@ -103,6 +112,28 @@ if handles.p ~= 0
 end
 handles.p = patch(x,y,'g');
 set(handles.p,'FaceAlpha',0.5);
+
+I = handles.I;
+ROI = find(I > min & I < max);
+%green = cat(3, zeros(size(I)), ones(size(I)), zeros(size(I)));
+axes(handles.axes2);
+%r(ROI) = 1;
+%mask = cat(3, r, g, b);
+cla;
+%hold on;
+%imshow(green);
+%hold off;
+
+h = imshow(I);
+
+%[M, N] = size(handles.I);
+%alpha = zeros(M, N);
+%alpha(:) = 0.2;
+
+tmp = zeros(size(I));
+tmp(ROI) = 1;
+set(h, 'AlphaData', tmp);
+
 guidata(hObject,handles);
 
 
