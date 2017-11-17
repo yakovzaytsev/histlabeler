@@ -22,7 +22,7 @@ function varargout = histLabeler(varargin)
 
 % Edit the above text to modify the response to help histLabeler
 
-% Last Modified by GUIDE v2.5 17-Nov-2017 22:26:49
+% Last Modified by GUIDE v2.5 17-Nov-2017 22:33:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -114,7 +114,7 @@ handles.p = patch(x,y,'g');
 set(handles.p,'FaceAlpha',0.5);
 
 I = handles.I;
-ROI = find(I > min & I < max);
+handles.ROI = find(I > min & I < max);
 %green = cat(3, zeros(size(I)), ones(size(I)), zeros(size(I)));
 axes(handles.axes2);
 %r(ROI) = 1;
@@ -131,7 +131,7 @@ h = imshow(I);
 %alpha(:) = 0.2;
 
 tmp = zeros(size(I));
-tmp(ROI) = 1;
+tmp(handles.ROI) = 1;
 set(h, 'AlphaData', tmp);
 
 guidata(hObject,handles);
@@ -232,3 +232,13 @@ function minedit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tmp = ones(size(handles.I));
+tmp(handles.ROI) = 0;
+imwrite(tmp,'/tmp/out.png');
