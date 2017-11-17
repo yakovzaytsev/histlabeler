@@ -54,8 +54,10 @@ function histLabeler_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for histLabeler
 handles.output = hObject;
-handles.maxslider.Callback = @(slider,evdata) updateSlider(handles.axes1, slider, handles.maxedit, handles.minedit, handles.maxedit);
-handles.minslider.Callback = @(slider,evdata) updateSlider(handles.axes1, slider, handles.minedit, handles.minedit, handles.maxedit);
+handles.p = 0;
+%handles.maxslider.Callback = @(slider,evdata) updateSlider(handles.axes1, slider, handles.maxedit, handles.minedit, handles.maxedit, handles);
+%handles.minslider.Callback = @(slider,evdata) updateSlider(handles.axes1, slider, handles.minedit, handles.minedit, handles.maxedit, handles);
+
 RGB = imread('/Users/ysz/MATLAB/meter/0_b_meter.jpg');
 axes(handles.axes2);
 I = rgb2gray(RGB);
@@ -67,17 +69,6 @@ guidata(hObject, handles);
 
 % UIWAIT makes histLabeler wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
-function updateSlider(axes1, slider, edit, minedit, maxedit)
-%axes(axes1);
-x = round(250 * slider.Value);
-set(edit, 'string',sprintf('%d', x));
-
-% XXX
-min = get(minedit, 'string');
-max = get(maxedit, 'string');
-
-fprintf('%s - %s\n', min, max);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -91,6 +82,30 @@ function varargout = histLabeler_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
+function updateSlider(hObject, edit, handles)
+slider = hObject;
+x = round(250 * slider.Value);
+
+set(edit, 'string',sprintf('%d', x));
+
+% XXX
+min = str2num(get(handles.minedit, 'string'));
+max = str2num(get(handles.maxedit, 'string'));
+
+fprintf('%d - %d\n', min, max);
+
+axes(handles.axes1);
+maxy = ylim;
+x = [min, min, max, max];
+y = [0,maxy(2),maxy(2),0];
+if handles.p ~= 0
+    delete(handles.p);
+end
+handles.p = patch(x,y,'g');
+set(handles.p,'FaceAlpha',0.5);
+guidata(hObject,handles);
+
+
 % --- Executes on slider movement.
 function maxslider_Callback(hObject, eventdata, handles)
 % hObject    handle to maxslider (see GCBO)
@@ -99,7 +114,7 @@ function maxslider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-
+updateSlider(hObject, handles.maxedit, handles);
 
 % --- Executes during object creation, after setting all properties.
 function maxslider_CreateFcn(hObject, eventdata, handles)
@@ -121,7 +136,7 @@ function minslider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-
+updateSlider(hObject, handles.minedit, handles);
 
 % --- Executes during object creation, after setting all properties.
 function minslider_CreateFcn(hObject, eventdata, handles)
