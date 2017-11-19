@@ -113,8 +113,7 @@ end
 handles.p = patch(x,y,'g');
 set(handles.p,'FaceAlpha',0.5);
 
-I = handles.I;
-handles.ROI = find(I > min & I < max);
+tmp = thresholdHist(handles.I, min, max);
 %green = cat(3, zeros(size(I)), ones(size(I)), zeros(size(I)));
 axes(handles.axes2);
 %r(ROI) = 1;
@@ -124,14 +123,12 @@ cla;
 %imshow(green);
 %hold off;
 
-h = imshow(I);
+h = imshow(handles.I);
 
 %[M, N] = size(handles.I);
 %alpha = zeros(M, N);
 %alpha(:) = 0.2;
 
-tmp = zeros(size(I));
-tmp(handles.ROI) = 1;
 set(h, 'AlphaData', tmp);
 
 guidata(hObject,handles);
